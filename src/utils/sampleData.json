@@ -1,0 +1,42 @@
+[
+    {
+        "persona": 1,
+        "mascara": 1
+    },
+    {
+        "persona": 2,
+        "mascara": 1
+    },
+    {
+        "persona": 3,
+        "mascara": 0
+    },
+    {
+        "persona": 4,
+        "mascara": 1
+    },
+    {
+        "persona": 5,
+        "mascara": 0
+    },
+    {
+        "persona": 6,
+        "mascara": 0
+    },
+    {
+        "persona": 7,
+        "mascara": 1
+    },
+    {
+        "persona": 8,
+        "mascara": 1
+    },
+    {
+        "persona": 9,
+        "mascara": 0
+    },
+    {
+        "persona": 10,
+        "mascara": 1
+    }
+]

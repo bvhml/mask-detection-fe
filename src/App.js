@@ -3,27 +3,22 @@ import { makeStyles } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/styles';
 import blue from '@material-ui/core/colors/blue';
 import deepOrange from '@material-ui/core/colors/deepOrange';
-import { BrowserRouter as Router, Route, Redirect } from "react-router-dom";
-import SignInForm from './components/auth/SignInForm';
-import Me from './components/auth/Me';
-import AuthHelperMethods from './helpers/AuthHelperMethods';
-import PirateTheme from './PirateTheme';
+import { BrowserRouter as Router, Route } from "react-router-dom";
+import PirateTheme from 'PirateTheme';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
+import { Dashboard } from 'components';
 
 let theme = PirateTheme;
-
-
-
-
-export default function App (props) {
+export default function App () {
 
   
   const mobile = useMediaQuery('(min-width:600px)');
   
   let useStyles = makeStyles(theme => ({
     root: {
-      height:  '100vh',
+      height:  'auto',
       padding: '6vh',
+      minHeight: '100vh',
     },
     footer: {
       display: 'flex',
@@ -165,38 +160,13 @@ export default function App (props) {
   }));
   
   const classes = useStyles();
-  let Auth = new AuthHelperMethods(process.env.REACT_APP_EP);
 
-  function ProtectedRoute(){
-    return <Me classes={classes}/>
-  }  
-
-  
-  function PrivateRoute({ component: Component, ...rest }) {
-    return (
-      <Route
-        {...rest}
-        render={props =>
-          Auth.loggedIn() ? (
-            <Component {...props} />
-          ) : (
-            <Redirect
-              to={{
-                pathname: "/"
-              }}
-            />
-          )
-        }
-      />
-    );
-  }
     return (
       <ThemeProvider theme={theme}>
         <Router>
           <Route path="/" exact>
-            <SignInForm classes={classes} mobile={mobile}/>
+            <Dashboard classes={classes} mobile={mobile}/>
           </Route>
-          <PrivateRoute path="/me" component={ProtectedRoute} />
         </Router>
       </ThemeProvider>
     );
