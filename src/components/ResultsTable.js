@@ -1,4 +1,4 @@
-import React, {forwardRef, useEffect} from 'react';
+import React, {forwardRef, useState, useEffect} from 'react';
 import MaterialTable from 'material-table';
 import AddBox from '@material-ui/icons/AddBox';
 import { ArrowDownward, Check, ChevronLeft, ChevronRight, Clear, DeleteOutline, Edit, FilterList, FirstPage, LastPage, Remove, SaveAlt, Search, ViewColumn } from '@material-ui/icons';
@@ -31,6 +31,7 @@ const ResultsTable = () => {
 
   
   //const [ programas, setProgramas ] = useState(null);
+  const [selectedRow, setSelectedRow] = useState(null);
   
   let columns= [
     { 
@@ -42,7 +43,6 @@ const ResultsTable = () => {
       title: 'Mascara', 
       field: 'mascara',
       lookup: { 0: 'Mascara no detectada', 1: 'Mascara detectada' },
-      render: (rowData) =><div style={{backgroundColor: Boolean(rowData.mascara) ? 'green':'red', color:'white'}}>{rowData.mascara ? 'Mascara detectada': 'Mascara no detectada'}</div>
     },
   ];
 
@@ -71,14 +71,21 @@ const ResultsTable = () => {
         icons={tableIcons}
         title="Mask detection"
         style={{padding: '3vh', width:'100%', height:'auto'}}
-            
+        onRowClick={((evt, selectedRow) => setSelectedRow(selectedRow.tableData.id))}
+
         options={{
           search: false,
           filtering: true,
           searchFieldAlignment:'left',
           exportButton: true,
-          pageSize: 10,}
-          }
+          pageSize: 10,
+          rowStyle: rowData => ({
+              backgroundColor: (selectedRow === rowData.tableData.id) ? '#EE' : rowData.mascara ? '#71BA51' : '#F29B34',
+              color: 'white'
+            })
+          }}
+        
+        
           
         localization={{ 
           toolbar: { searchPlaceholder: 'Buscar' },
