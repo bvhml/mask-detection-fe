@@ -19,6 +19,7 @@ export default function App () {
       height:  'auto',
       padding: '6vh',
       minHeight: '100vh',
+      backgroundColor: '#60646D'
     },
     footer: {
       display: 'flex',
