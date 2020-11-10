@@ -1,12 +1,12 @@
 import React, {forwardRef, useState, useEffect} from 'react';
 import MaterialTable from 'material-table';
-import AddBox from '@material-ui/icons/AddBox';
+import { AddBox } from '@material-ui/icons/';
 import { ArrowDownward, Check, ChevronLeft, ChevronRight, Clear, DeleteOutline, Edit, FilterList, FirstPage, LastPage, Remove, SaveAlt, Search, ViewColumn } from '@material-ui/icons';
-import { Grid, Paper } from '@material-ui/core';
-import axios from 'axios';
+import { Grid, Paper, Typography } from '@material-ui/core';
 import Skeleton from '@material-ui/lab/Skeleton';
-import SampleData from 'utils/sampleData.json';
-
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import ErrorIcon from '@material-ui/icons/Error';
+import CameraAltIcon from '@material-ui/icons/CameraAlt';
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
   Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
@@ -30,43 +30,125 @@ const tableIcons = {
 const ResultsTable = () => {
 
   
-  //const [ programas, setProgramas ] = useState(null);
+  const [ data, setData] = useState(null);
   const [selectedRow, setSelectedRow] = useState(null);
   
   let columns= [
     { 
       title: 'Persona', 
-      field: 'persona',
+      field: 'ID',
+      filtering:false,
+    },
+    { 
+      title: 'Imagen', 
+      field: 'imagen',
       filtering:false,
     },
     { 
       title: 'Mascara', 
-      field: 'mascara',
+      field: 'MASCARILLA',
       lookup: { 0: 'Mascara no detectada', 1: 'Mascara detectada' },
+    },
+    { 
+      title: 'Fecha', 
+      field: 'FECHA_INGRESO',
+      filtering:false,
+      render: rowData => <div>{new Date(rowData.FECHA_INGRESO).toLocaleDateString("en-US")}</div>
     },
   ];
 
   useEffect(()=>{
-    let signal = axios.CancelToken.source();
-    const getProgramas = async ()=>{
+    const getData = async ()=>{
       try {
-        //const response = await ProgramaHelperMethodsInstance.buscarProgramas(signal.token);
-        //setProgramas(response);
+        const response = await
+        fetch('http://localhost:3000/api/sarscov2/getUsers')
+        .then(response=>response.json());
+        console.log(response)
+        setData(response);
       } catch (error) {}   
     };
 
-    getProgramas();
-    
-    return ()=>signal.cancel('Api is being canceled')
+    getData();
   },[]);
 
 
-  if (true) {
-    return (<Grid container item xs={12} md={12} square spacing={2} style={{backgroundColor:'transparent'}} justify={'center'} alignContent='center'>  
-      
+  if (data) {
+    return (
+    <Grid container item xs={12} md={12} square="true" spacing={2} style={{backgroundColor:'transparent'}} justify={'center'} alignContent='center'>
+    <Grid container item spacing={2}>
+      <Grid item xs={12}>
+        <Paper elevation={5} style={{padding:'5vh'}}>
+          <Grid container item justify={'center'} >
+            <Typography variant={'h2'} style={{textTransform:'none'}}>
+              Mask Detector Dashboard
+            </Typography> 
+          </Grid>
+        </Paper>
+      </Grid>
+      <Grid item xs={12}>
+        <Paper elevation={5}>
+          <Grid container item justify={'center'}>
+          <Typography variant={'subtitle1'}>
+            Usuarios analizados:
+          </Typography> 
+          </Grid>
+          <Grid container item justify={'center'}>
+            <Typography>
+            <CameraAltIcon style={{color:'#37767A', height:'100px',width:'100px'}}/>
+            </Typography>
+          </Grid>
+          <Grid container item justify={'center'}>
+            <Typography variant={'h4'}>
+            {data.length}
+            </Typography>
+          </Grid>
+        </Paper>
+      </Grid>
+    </Grid>
+      <Grid container item spacing={2}>
+        <Grid item xs={12} md={6}>
+          <Paper elevation={5}>
+            <Grid container item justify={'center'}>
+            <Typography variant={'subtitle1'}>
+              Usuarios sin mascarilla:
+            </Typography> 
+            </Grid>
+            <Grid container item justify={'center'}>
+            <Typography>
+              <ErrorIcon style={{color:'#F29B34', height:'100px',width:'100px'}}/>
+            </Typography> 
+            </Grid>
+            <Grid container item justify={'center'}>
+            <Typography variant={'h4'}>
+            {data.filter((element)=>element.MASCARILLA === 0).length}
+            </Typography>
+            </Grid>
+          </Paper>
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <Paper elevation={5}>
+            <Grid container item justify={'center'}>
+                <Typography variant={'subtitle1'}>
+                  Usuarios con mascarilla:
+                </Typography> 
+            </Grid>
+            <Grid container item justify={'center'}>
+                <Typography>
+                  <CheckCircleIcon style={{color:'#71BA51', height:'100px',width:'100px'}}/>
+                </Typography> 
+            </Grid>
+            <Grid container item justify={'center'}>
+              <Typography variant={'h4'}>
+              {data.filter((element)=>element.MASCARILLA === 1).length} 
+              </Typography> 
+            </Grid>
+          </Paper>
+        </Grid>    
+      </Grid>  
+      <Grid container item xs={12}>
       <MaterialTable
         columns={columns}
-        data={SampleData}
+        data={data}
         stickyHeader
         icons={tableIcons}
         title="Mask detection"
@@ -80,7 +162,7 @@ const ResultsTable = () => {
           exportButton: true,
           pageSize: 10,
           rowStyle: rowData => ({
-              backgroundColor: (selectedRow === rowData.tableData.id) ? '#EE' : rowData.mascara ? '#71BA51' : '#F29B34',
+              backgroundColor: (selectedRow === rowData.tableData.id) ? '#EE' : rowData.MASCARILLA ? '#71BA51' : '#F29B34',
               color: 'white'
             })
           }}
@@ -97,6 +179,7 @@ const ResultsTable = () => {
           } 
           }}
       />
+      </Grid>
       </Grid>);
   }else{
     return (
