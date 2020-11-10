@@ -15,4 +15,3 @@ You will also see any lint errors in the console.
 ### `Preview`
 
 ![Demo](/images/image.png)
-Format: ![Alt Text](url)
