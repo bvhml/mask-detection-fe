@@ -1,4 +1,4 @@
-import React, {forwardRef, useState, useEffect} from 'react';
+import React, { forwardRef, useState, useEffect} from 'react';
 import MaterialTable from 'material-table';
 import { AddBox } from '@material-ui/icons/';
 import { ArrowDownward, Check, ChevronLeft, ChevronRight, Clear, DeleteOutline, Edit, FilterList, FirstPage, LastPage, Remove, SaveAlt, Search, ViewColumn } from '@material-ui/icons';
@@ -7,6 +7,8 @@ import Skeleton from '@material-ui/lab/Skeleton';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import ErrorIcon from '@material-ui/icons/Error';
 import CameraAltIcon from '@material-ui/icons/CameraAlt';
+import Tooltip from '@material-ui/core/Tooltip';
+
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
   Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
@@ -27,12 +29,17 @@ const tableIcons = {
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />)
 };
 
+const ImageComponent = forwardRef(function ImageComponent(props, ref) {
+  //  Spread the props to the underlying DOM element.
+  return <img {...props} ref={ref}/>
+});
+
 const ResultsTable = () => {
 
   
   const [ data, setData] = useState(null);
   const [selectedRow, setSelectedRow] = useState(null);
-  
+  //<img style={{width:'300px'}} src={rowData.PHOTOURL} alt="imagen"/>
   let columns= [
     { 
       title: 'Persona', 
@@ -41,8 +48,10 @@ const ResultsTable = () => {
     },
     { 
       title: 'Imagen', 
-      field: 'imagen',
+      field: 'PHOTOURL',
       filtering:false,
+      render: rowData => (<Tooltip title="Imagen"><ImageComponent style={{width:'300px'}} src={rowData.PHOTOURL} alt="imagen"/></Tooltip>)
+      
     },
     { 
       title: 'Mascara', 
@@ -61,7 +70,7 @@ const ResultsTable = () => {
     const getData = async ()=>{
       try {
         const response = await
-        fetch('http://localhost:3000/api/sarscov2/getUsers')
+        fetch(process.env.REACT_APP_REQUEST_URI)
         .then(response=>response.json());
         console.log(response)
         setData(response);
